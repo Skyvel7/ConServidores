@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php if ($success): ?>
         <p style="color:green;"><?php echo htmlspecialchars($success); ?></p>
     <?php endif; ?>
-    <form method="post" action="agregar_producto.php">
+    <form method="post" action="index.php">
         <label for="nombre">Nombre:</label>
         <input type="text" id="nombre" name="nombre" required>
         <br><br>
