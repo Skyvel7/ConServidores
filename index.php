@@ -1,11 +1,14 @@
 <?php
-$servername = "localhost";
-$username = "postgres";
-$password = "bimbo123";
-$dbname = "skyvelbd";
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
+$host = '10.0.0.2';      // IP del Servidor de Base de Datos
+$port = 5432;
+$dbname = 'mibd';
+$dbuser = 'webuser';
+$dbpassword = 'contra1234';  // Reemplaza con la contraseña realssssssss
+
+$conn = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$password");
+
+if (!$conn) {
+    die("Conexión fallida: " . pg_last_error());
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -14,22 +17,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $precio = $_POST["precio"];
         $stock = $_POST["stock"];
         $sql = "INSERT INTO productos (nombre, precio, stock) VALUES ('$nombre', $precio, $stock)";
-        $conn->query($sql);
+        pg_query($conn, $sql);
     } elseif (isset($_POST["eliminar"])) {
         $id = $_POST["id"];
         $sql = "DELETE FROM productos WHERE id=$id";
-        $conn->query($sql);
+        pg_query($conn, $sql);
     }
 }
 
-$productos = $conn->query("SELECT * FROM productos");
-$conn->close();
+$productos = pg_query($conn, "SELECT * FROM productos");
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tienda</title>
+    <title>Tienda Skyvel</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -91,7 +93,7 @@ $conn->close();
         <button type="submit" name="agregar">Agregar</button>
     </form>
     <ul>
-        <?php while ($row = $productos->fetch_assoc()) { ?>
+        <?php while ($row = pg_fetch_assoc($productos)) { ?>
             <li>
                 <?php echo $row["nombre"] . " - $" . $row["precio"] . " - Stock: " . $row["stock"]; ?>
                 <form method="POST" class="inline">
@@ -101,5 +103,6 @@ $conn->close();
             </li>
         <?php } ?>
     </ul>
+    <?php pg_close($conn); ?>
 </body>
 </html>
